@@ -17,7 +17,7 @@ export const story = {
   site: {
     title: "Nuestra historia",
     description: "Hola Lysmarcita",
-    url: "", // Cuando publiques, pega aquí tu enlace: "https://nuestra-historia.vercel.app"
+    url: "https://nuestrahistoria-phi.vercel.app", // Cuando publiques, pega aquí tu enlace: "https://nuestra-historia.vercel.app"
   },
 
   names: {
