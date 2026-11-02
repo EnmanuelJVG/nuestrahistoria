@@ -1,0 +1,6 @@
+AQUÍ VAN LAS FOTOGRAFÍAS
+- Nombres sin espacios, sin tildes y en minúsculas: primera-cita.jpg
+  (Vercel distingue mayúsculas: "Foto.JPG" y "foto.jpg" NO son lo mismo).
+- Formato JPG, ancho máximo ~1600 px y menos de 400 KB cada una (usa squoosh.app).
+- En src/data/story.js solo escribes el nombre: photo: "primera-cita.jpg"
+- compartir.jpg (1200x630 px) es la imagen que se ve al enviar el enlace por WhatsApp.
