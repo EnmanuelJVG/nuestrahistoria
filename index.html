@@ -1,33 +1,667 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>%SITE_TITLE%</title>
-    <meta name="description" content="%SITE_DESCRIPTION%" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FAF5EC" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="%SITE_TITLE%" />
-    <meta property="og:description" content="%SITE_DESCRIPTION%" />
-    <meta property="og:image" content="%SITE_IMAGE%" />
-    <meta property="og:url" content="%SITE_URL%" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#7c0d14" />
+    <title>Nuestro Wrapped: 5 Meses</title>
+
+    <!-- Google Fonts: Cormorant Garamond (editorial serif), Pinyon Script & Great Vibes (caligrafía), Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
-    <style>
-      html,body{margin:0;background:#FAF5EC}
-      .boot{height:100vh;height:100svh;display:grid;place-items:center}
-      .boot i{width:46px;height:62px;border:1.5px solid #D8B2AA;border-radius:46px 46px 0 0;animation:b 1.6s ease-in-out infinite alternate}
-      @keyframes b{from{opacity:.25}to{opacity:1}}
-    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Great+Vibes&family=Pinyon+Script&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="root"><div class="boot"><i></i></div></div>
-    <noscript><p style="font:1.2rem Georgia,serif;padding:2rem;text-align:center">Esta página necesita JavaScript para mostrarse.</p></noscript>
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- Contenedor principal: marco burdeos exterior, 100dvh en móvil y teléfono centrado en PC -->
+    <div class="app-shell">
+      <!-- Canvas para confeti en toda la pantalla (Slide 7) -->
+      <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+      <main
+        class="phone-frame"
+        id="phone-frame"
+        data-active-slide="0"
+        aria-live="polite"
+      >
+        <!-- Hoja editorial blanca enmarcada por el borde carmesí -->
+        <div class="editorial-sheet">
+          <!-- Barra superior minimalista tipo Stories -->
+          <header class="stories-header">
+            <div
+              class="progress-bars"
+              id="progress-bars"
+              role="tablist"
+              aria-label="Progreso de pantallas"
+            >
+              <!-- Los 7 segmentos se generan dinámicamente desde app.js -->
+            </div>
+
+            <div class="header-meta">
+              <span class="meta-side" id="header-start-date">24 de Junio</span>
+              <span class="meta-center" id="header-couple-names">Tú &amp; Yo</span>
+
+              <div class="header-actions">
+                <span class="pause-pill" id="pause-indicator" aria-hidden="true">
+                  Pausa
+                </span>
+
+                <button
+                  type="button"
+                  class="audio-btn is-muted"
+                  id="audio-toggle"
+                  aria-label="Activar o silenciar música"
+                  title="Música de fondo"
+                >
+                  <svg
+                    class="icon-sound-on"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </svg>
+                  <svg
+                    class="icon-sound-off"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <!-- Zonas visuales sutiles para toque izq/der -->
+          <div class="tap-zone tap-zone-left" id="tap-prev" aria-hidden="true"></div>
+          <div class="tap-zone tap-zone-right" id="tap-next" aria-hidden="true"></div>
+
+          <!-- Contenedor de las 7 pantallas (slides) -->
+          <div class="slides-viewport" id="slides-viewport">
+            <!-- =============================================================
+                 SLIDE 1: PORTADA DE BIENVENIDA
+                 ============================================================= -->
+            <section
+              class="slide slide-cover is-active"
+              data-slide="0"
+              aria-label="Portada de bienvenida"
+            >
+              <div class="slide-inner cover-layout">
+                <p class="editorial-tag anim-item" style="--delay: 0.06s" id="s1-tag">
+                  24 JUN — 24 NOV • EDICIÓN ANIVERSARIO
+                </p>
+
+                <div class="cover-hero anim-item" style="--delay: 0.14s">
+                  <!-- Lazo fino SVG estilo ilustración editorial -->
+                  <svg
+                    class="ribbon-illustration"
+                    viewBox="0 0 260 150"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M130 74 C92 32, 34 26, 28 54 C23 78, 78 88, 126 76"
+                      stroke="currentColor"
+                      stroke-width="1.15"
+                    />
+                    <path
+                      d="M130 74 C168 32, 226 26, 232 54 C237 78, 182 88, 134 76"
+                      stroke="currentColor"
+                      stroke-width="1.15"
+                    />
+                    <path
+                      d="M126 78 C98 100, 60 124, 38 140 C56 142, 82 126, 126 82"
+                      stroke="currentColor"
+                      stroke-width="1.1"
+                    />
+                    <path
+                      d="M134 78 C162 100, 200 124, 222 140 C204 142, 178 126, 134 82"
+                      stroke="currentColor"
+                      stroke-width="1.1"
+                    />
+                    <ellipse
+                      cx="130"
+                      cy="76"
+                      rx="9"
+                      ry="6.5"
+                      stroke="currentColor"
+                      stroke-width="1.15"
+                    />
+                  </svg>
+
+                  <div class="flanked-title-row">
+                    <span class="flank-num" id="s1-code-start">06</span>
+                    <h1 class="editorial-title cover-title" id="s1-title">
+                      Nuestro Wrapped: 5 Meses
+                    </h1>
+                    <span class="flank-num" id="s1-code-end">11</span>
+                  </div>
+                </div>
+
+                <p
+                  class="editorial-subtitle anim-item"
+                  style="--delay: 0.24s"
+                  id="s1-subtitle"
+                >
+                  Cinco meses coleccionando risas, miradas cómplices y momentos
+                  que quiero repetir siempre.
+                </p>
+
+                <div class="cover-cta-wrap anim-item" style="--delay: 0.34s">
+                  <button type="button" class="btn-editorial" id="btn-start">
+                    <span id="s1-btn-text">Empezar</span>
+                    <span class="btn-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <p class="tap-hint">
+                    toca los lados para avanzar • mantén presionado para pausar
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 2: CONTADOR DEL TIEMPO
+                 ============================================================= -->
+            <section
+              class="slide slide-time"
+              data-slide="1"
+              aria-label="Contador del tiempo juntos"
+            >
+              <div class="slide-inner time-layout">
+                <p
+                  class="editorial-kicker anim-item"
+                  style="--delay: 0.05s"
+                  id="s2-heading"
+                >
+                  Todo este tiempo juntos
+                </p>
+
+                <div class="time-rows" id="s2-counters">
+                  <!-- Los 3 contadores se inyectan dinámicamente desde config.js -->
+                </div>
+
+                <blockquote
+                  class="editorial-quote anim-item"
+                  style="--delay: 0.48s"
+                  id="s2-quote"
+                >
+                  ...y todavía nos caemos bien.
+                </blockquote>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 3: TOP 3 MOMENTOS FAVORITOS (POLAROID EDITORIAL)
+                 ============================================================= -->
+            <section
+              class="slide slide-moments"
+              data-slide="2"
+              aria-label="Top 3 Momentos Favoritos"
+            >
+              <div class="slide-inner moments-layout">
+                <div class="slide-head anim-item" style="--delay: 0.05s">
+                  <h2 class="editorial-title slide-title" id="s3-title">
+                    Top 3 Momentos Favoritos
+                  </h2>
+                  <p class="editorial-subhead" id="s3-subtitle">
+                    Instantes que viven gratis en mi memoria
+                  </p>
+                </div>
+
+                <div class="polaroid-stack" id="s3-polaroids">
+                  <!-- Las 3 tarjetas Polaroid editoriales se generan desde config.js -->
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 4: ESTADÍSTICAS Y CHISTES INTERNOS
+                 ============================================================= -->
+            <section
+              class="slide slide-stats"
+              data-slide="3"
+              aria-label="Estadísticas y chistes internos"
+            >
+              <div class="slide-inner stats-layout">
+                <div class="slide-head anim-item" style="--delay: 0.05s">
+                  <h2 class="editorial-title slide-title" id="s4-title">
+                    Estadísticas &amp; Chistes Internos
+                  </h2>
+                  <p class="editorial-subhead" id="s4-subtitle">
+                    Datos 100% científicos y verificados
+                  </p>
+                </div>
+
+                <div class="stats-editorial-list">
+                  <!-- Dato numérico destacado -->
+                  <article
+                    class="stat-block stat-block-featured anim-item"
+                    style="--delay: 0.14s"
+                  >
+                    <div class="stat-featured-row">
+                      <div class="stat-featured-copy">
+                        <span class="stat-label" id="s4-featured-label">
+                          Veces que preguntamos «¿qué vamos a comer?»
+                        </span>
+                        <p class="stat-note" id="s4-featured-note">
+                          Y terminamos pidiendo lo mismo de siempre
+                        </p>
+                      </div>
+                      <span
+                        class="stat-hero-number"
+                        id="s4-featured-value"
+                        data-target="847"
+                        >0</span
+                      >
+                    </div>
+                  </article>
+
+                  <!-- Barras de progreso de línea fina -->
+                  <div id="s4-bars-container" class="bars-container">
+                    <!-- Generado dinámicamente desde config.js -->
+                  </div>
+
+                  <!-- Chiste interno: Quién se queda dormido primero -->
+                  <article
+                    class="stat-block stat-sleep-block anim-item"
+                    style="--delay: 0.42s"
+                  >
+                    <span class="crimson-mini-tag">dato nocturno</span>
+                    <p class="stat-label" id="s4-sleep-label">
+                      Quién se queda dormido primero viendo una peli
+                    </p>
+                    <div class="sleep-winner" id="s4-sleep-name">[Nombre]</div>
+                    <p class="stat-note" id="s4-sleep-note">
+                      Récord histórico: a los 12 minutos de empezar
+                    </p>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 5: NUESTRA BANDA SONORA (VINILO + REPRODUCTOR EDITORIAL)
+                 ============================================================= -->
+            <section
+              class="slide slide-soundtrack"
+              data-slide="4"
+              aria-label="Nuestra banda sonora"
+            >
+              <!-- Estrellas decorativas laterales en rosa empolvado -->
+              <svg
+                class="edge-star edge-star-left"
+                viewBox="0 0 60 60"
+                aria-hidden="true"
+              >
+                <polygon
+                  fill="currentColor"
+                  points="30,2 37,21 58,21 41,33 47,54 30,41 13,54 19,33 2,21 23,21"
+                />
+              </svg>
+              <svg
+                class="edge-star edge-star-right"
+                viewBox="0 0 60 60"
+                aria-hidden="true"
+              >
+                <polygon
+                  fill="currentColor"
+                  points="30,2 37,21 58,21 41,33 47,54 30,41 13,54 19,33 2,21 23,21"
+                />
+              </svg>
+
+              <div class="slide-inner soundtrack-layout">
+                <h2
+                  class="editorial-title soundtrack-heading anim-item"
+                  style="--delay: 0.06s"
+                  id="s5-heading"
+                >
+                  Nuestra Banda Sonora
+                </h2>
+
+                <!-- Carátula cuadrada + disco de vinilo asomándose -->
+                <article
+                  class="vinyl-player-card anim-item"
+                  style="--delay: 0.16s"
+                  aria-label="Tarjeta estilo reproductor de música"
+                >
+                  <div class="vinyl-stage">
+                    <div class="vinyl-disc" aria-hidden="true">
+                      <span class="vinyl-grooves"></span>
+                      <span class="vinyl-label"></span>
+                    </div>
+
+                    <div class="album-cover-frame">
+                      <img
+                        id="s5-cover"
+                        src="assets/portada-cancion.jpg"
+                        alt="Carátula de nuestra canción"
+                        class="spotify-cover"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="player-meta-row">
+                    <div class="player-track-info">
+                      <h3 class="player-song" id="s5-song">
+                        Nuestra Canción Favorita
+                      </h3>
+                      <p class="player-artist" id="s5-artist">
+                        Tu Artista Favorito
+                      </p>
+                    </div>
+
+                    <div class="player-controls-mini">
+                      <span class="player-heart" aria-hidden="true">♥</span>
+                      <button
+                        type="button"
+                        class="sp-play-btn"
+                        id="spotify-play-btn"
+                        aria-label="Pausar o reproducir música"
+                      >
+                        <svg viewBox="0 0 24 24" class="sp-icon-pause" fill="currentColor">
+                          <rect x="6" y="4" width="3.5" height="16" rx="1" />
+                          <rect x="14.5" y="4" width="3.5" height="16" rx="1" />
+                        </svg>
+                        <svg viewBox="0 0 24 24" class="sp-icon-play" fill="currentColor">
+                          <polygon points="7 4 20 12 7 20 7 4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="spotify-progress-wrap">
+                    <div class="spotify-bar-track">
+                      <div class="spotify-bar-fill" id="s5-progress-fill">
+                        <span class="spotify-bar-knob"></span>
+                      </div>
+                    </div>
+                    <div class="spotify-times">
+                      <span id="s5-time-current">1:24</span>
+                      <span class="spotify-badge-text">en bucle contigo</span>
+                      <span id="s5-time-total">3:45</span>
+                    </div>
+                  </div>
+                </article>
+
+                <blockquote
+                  class="editorial-quote soundtrack-meaning anim-item"
+                  style="--delay: 0.3s"
+                  id="s5-meaning"
+                >
+                  Porque cada vez que suena, inevitablemente me acuerdo de ti.
+                </blockquote>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 6: EL MENSAJE SINCERO (ESPACIO, AIRE Y TIPOGRAFÍA)
+                 ============================================================= -->
+            <section
+              class="slide slide-letter"
+              data-slide="5"
+              aria-label="El mensaje sincero"
+            >
+              <div class="slide-inner letter-layout">
+                <p
+                  class="editorial-kicker anim-item"
+                  style="--delay: 0.06s"
+                  id="s6-heading"
+                >
+                  Un mensaje para ti
+                </p>
+
+                <article class="letter-sheet anim-item" style="--delay: 0.16s">
+                  <!-- Lazo sutil de fondo -->
+                  <svg
+                    class="ribbon-letter-bg"
+                    viewBox="0 0 260 150"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M130 74 C92 32, 34 26, 28 54 C23 78, 78 88, 126 76"
+                      stroke="currentColor"
+                      stroke-width="1"
+                    />
+                    <path
+                      d="M130 74 C168 32, 226 26, 232 54 C237 78, 182 88, 134 76"
+                      stroke="currentColor"
+                      stroke-width="1"
+                    />
+                    <path
+                      d="M126 78 C98 100, 60 124, 38 140 C56 142, 82 126, 126 82"
+                      stroke="currentColor"
+                      stroke-width="1"
+                    />
+                    <path
+                      d="M134 78 C162 100, 200 124, 222 140 C204 142, 178 126, 134 82"
+                      stroke="currentColor"
+                      stroke-width="1"
+                    />
+                  </svg>
+
+                  <h2 class="letter-salutation" id="s6-salutation">Mi amor,</h2>
+
+                  <div class="letter-body" id="s6-paragraphs">
+                    <!-- Párrafos cargados desde config.js -->
+                  </div>
+
+                  <div class="letter-footer">
+                    <p class="letter-farewell" id="s6-farewell">
+                      Felices 5 meses.
+                    </p>
+                    <p class="letter-signature" id="s6-signature">
+                      Con todo mi amor ❤️
+                    </p>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 SLIDE 7: LA SORPRESA FINAL (CANJE DE CUPONES SECRETOS)
+                 ============================================================= -->
+            <section
+              class="slide slide-surprise"
+              data-slide="6"
+              aria-label="La sorpresa final"
+            >
+              <div class="slide-inner surprise-layout" id="surprise-container">
+                <!-- Vista de desbloqueo y lista de cupones -->
+                <div class="surprise-locked" id="surprise-locked">
+                  <svg
+                    class="ribbon-surprise"
+                    viewBox="0 0 260 150"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M130 74 C92 32, 34 26, 28 54 C23 78, 78 88, 126 76"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                    />
+                    <path
+                      d="M130 74 C168 32, 226 26, 232 54 C237 78, 182 88, 134 76"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                    />
+                    <path
+                      d="M126 78 C98 100, 60 124, 38 140 C56 142, 82 126, 126 82"
+                      stroke="currentColor"
+                      stroke-width="1.1"
+                    />
+                    <path
+                      d="M134 78 C162 100, 200 124, 222 140 C204 142, 178 126, 134 82"
+                      stroke="currentColor"
+                      stroke-width="1.1"
+                    />
+                    <ellipse
+                      cx="130"
+                      cy="76"
+                      rx="9"
+                      ry="6.5"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                    />
+                  </svg>
+
+                  <p
+                    class="editorial-kicker anim-item"
+                    style="--delay: 0.08s"
+                    id="s7-pretitle"
+                  >
+                    Una última cosa...
+                  </p>
+
+                  <h2
+                    class="editorial-title surprise-title anim-item"
+                    style="--delay: 0.15s"
+                    id="s7-title"
+                  >
+                    Tu regalo de 5 meses
+                  </h2>
+
+                  <p
+                    class="editorial-subtitle surprise-lead anim-item"
+                    style="--delay: 0.22s"
+                    id="s7-subtitle"
+                  >
+                    Tengo 3 cupones secretos guardados para ti. Cuando te dé un
+                    código, escríbelo aquí para descubrir qué ganaste:
+                  </p>
+
+                  <form
+                    class="coupon-form anim-item"
+                    id="coupon-form"
+                    style="--delay: 0.3s"
+                    autocomplete="off"
+                  >
+                    <input
+                      type="text"
+                      id="coupon-input"
+                      class="coupon-input"
+                      placeholder="Escribe tu código aquí..."
+                      aria-label="Código de cupón"
+                      autocapitalize="characters"
+                      spellcheck="false"
+                    />
+                    <button
+                      type="submit"
+                      class="btn-editorial btn-coupon-submit"
+                      id="btn-unlock"
+                    >
+                      <span id="s7-btn-text">Desbloquear cupón</span>
+                    </button>
+                    <p
+                      class="coupon-feedback"
+                      id="coupon-feedback"
+                      role="alert"
+                      hidden
+                    ></p>
+                  </form>
+
+                  <div
+                    class="coupon-slots-wrap anim-item"
+                    style="--delay: 0.38s"
+                  >
+                    <p class="coupon-slots-title" id="coupon-slots-title">
+                      Cupones desbloqueados: 0 de 3
+                    </p>
+                    <div class="coupon-slots" id="coupon-slots">
+                      <!-- Lista de estado de los 3 cupones generada desde app.js -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tarjeta de recompensa revelada al acertar un código -->
+                <div class="surprise-unlocked" id="surprise-unlocked" hidden>
+                  <div class="coupon-card">
+                    <span class="crimson-mini-tag" id="s7-coupon-badge">
+                      cupón desbloqueado
+                    </span>
+                    <div class="coupon-heart" aria-hidden="true">♥</div>
+                    <h2 class="coupon-message" id="s7-unlocked-msg">
+                      ¡Felicidades! Has ganado una sorpresa
+                    </h2>
+                    <p class="coupon-description" id="s7-unlocked-desc">
+                      Este cupón vale por un momento muy especial juntos.
+                    </p>
+                    <p class="coupon-extra" id="s7-extra-note">
+                      Válido cuando tú quieras
+                    </p>
+
+                    <div class="coupon-actions">
+                      <button
+                        type="button"
+                        class="btn-editorial btn-editorial-sm"
+                        id="btn-another-coupon"
+                      >
+                        Canjear otro código
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-outline-sm"
+                        id="btn-replay-confetti"
+                      >
+                        Más confeti
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      class="btn-link-subtle"
+                      id="btn-restart-story"
+                    >
+                      volver a ver nuestro wrapped
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Pie editorial minimalista estilo referencia (atrás | página X de 7 | siguiente) -->
+          <footer class="editorial-footer">
+            <button type="button" class="footer-nav-btn" id="footer-prev">
+              atrás
+            </button>
+            <span class="footer-page-indicator" id="slide-counter">
+              página 1 de 7
+            </span>
+            <button type="button" class="footer-nav-btn" id="footer-next">
+              siguiente
+            </button>
+          </footer>
+        </div>
+      </main>
+    </div>
+
+    <!-- Elemento de audio para la música de fondo -->
+    <audio id="bg-music" loop preload="auto"></audio>
+
+    <!-- Primero la configuración centralizada, luego la lógica de la app -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
